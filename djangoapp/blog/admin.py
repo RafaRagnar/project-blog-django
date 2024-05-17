@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Tag, Category, Page
+from blog.models import Tag, Category, Page, Post
 
 
 @admin.register(Tag)
@@ -38,3 +38,23 @@ class PageAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ('title',),
     }
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display: tuple = ('id', 'title', 'is_published', 'created_by')
+    list_display_links: tuple = ('title',)
+    search_fields: tuple = (
+        'id', 'slug', 'title', 'excerpt', 'content',
+    )
+    list_per_page: int = 50
+    list_filter: tuple = ('category', 'is_published')
+    list_editable: tuple = ('is_published',)
+    ordering: tuple = ('-id',)
+    readonly_fields: tuple = (
+        'created_at', 'updated_at', 'created_by', 'updated_by',
+    )
+    prepopulated_fields: dict = {
+        "slug": ('title',),
+    }
+    autocomplete_fields: tuple = ('tags', 'category')
