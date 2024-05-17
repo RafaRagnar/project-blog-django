@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Tag, Category
+from blog.models import Tag, Category, Page
 
 
 @admin.register(Tag)
@@ -15,7 +15,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class CagetoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     list_display: tuple = ('id', 'name', 'slug')
     list_display_links: tuple = ('name',)
     search_fields: tuple = ('id', 'name', 'slug')
@@ -23,4 +23,18 @@ class CagetoryAdmin(admin.ModelAdmin):
     ordering: tuple = ('-id',)
     prepopulated_fields: dict = {
         "slug": ('name',),
+    }
+
+
+@admin.register(Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = 'id', 'title', 'is_published',
+    list_display_links = 'title',
+    search_fields = 'id', 'slug', 'title', 'content',
+    list_per_page = 50
+    list_filter = 'is_published',
+    list_editable = 'is_published',
+    ordering = '-id',
+    prepopulated_fields = {
+        "slug": ('title',),
     }
