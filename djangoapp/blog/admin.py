@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import admin
 from blog.models import Tag, Category, Page, Post
 
@@ -28,14 +29,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Page)
 class PageAdmin(admin.ModelAdmin):
-    list_display = 'id', 'title', 'is_published',
-    list_display_links = 'title',
-    search_fields = 'id', 'slug', 'title', 'content',
-    list_per_page = 50
-    list_filter = 'is_published',
-    list_editable = 'is_published',
-    ordering = '-id',
-    prepopulated_fields = {
+    list_display: tuple = ('id', 'title', 'is_published',)
+    list_display_links: tuple = ('title',)
+    search_fields: tuple = ('id', 'slug', 'title', 'content',)
+    list_per_page: int = 50
+    list_filter: tuple = ('is_published',)
+    list_editable: tuple = ('is_published',)
+    ordering: tuple = ('-id',)
+    prepopulated_fields: dict = {
         "slug": ('title',),
     }
 
@@ -58,3 +59,13 @@ class PostAdmin(admin.ModelAdmin):
         "slug": ('title',),
     }
     autocomplete_fields: tuple = ('tags', 'category')
+
+    def save_model(
+            self, request: Any, obj: Any, form: Any, change: Any
+    ) -> None:
+        if change:
+            obj.updated_by = request.user
+        else:
+            obj.created_by = request.user
+
+        return super().save_model(request, obj, form, change)
